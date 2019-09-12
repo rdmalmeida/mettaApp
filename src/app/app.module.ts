@@ -1,3 +1,5 @@
+import { UtilModule } from './util/util.module';
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -9,6 +11,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -16,8 +19,15 @@ import { AppRoutingModule } from './app-routing.module';
   providers: [
     StatusBar,
     SplashScreen,
+
+    /*{ provide: File, useClass:    File },
+    { provide: WebView, useClass:    WebView },
+    { provide: FileChooser, useClass:    FileChooser },
+    { provide: FilePath, useClass:    FilePath },*/
+
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
+
 })
 export class AppModule {}

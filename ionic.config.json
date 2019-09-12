@@ -1,5 +1,7 @@
 {
   "name": "mettaAPP",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

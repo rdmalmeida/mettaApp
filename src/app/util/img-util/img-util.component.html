@@ -1,0 +1,52 @@
+<ion-list>
+  
+<!--
+
+  <ion-item>
+    <input type="button" (click)="pegaImagem()" value="imagem" />
+  </ion-item>
+
+-->
+
+  <div *ngIf="imagesSrcs.length>0"> <!--style="width: 38%"-->
+    <ion-item *ngFor="let item of imagesSrcs">
+        
+        <ion-avatar style="height: 100px;width: 100px;">
+            <img [src]='item'>  
+        </ion-avatar>
+
+        <ion-label style="margin-left: 10px;">03 / 10 Praticas realizadas</ion-label>
+
+    </ion-item>
+  </div>
+
+  
+
+</ion-list>
+
+<!--
+
+html com tres fotos centralizadas
+
+
+
+
+
+<ion-list>
+  
+
+
+  <ion-item *ngFor="let item of imagesSrcs" class="item-avatar-right">
+
+      <img src="https://placekitten.com/g/50/50" alt="" />
+      <img src="https://placekitten.com/g/50/50" alt="" />
+      <img src="https://placekitten.com/g/50/50" alt="" />
+      
+  </ion-item>
+</div>
+
+
+
+</ion-list>
+
+-->
