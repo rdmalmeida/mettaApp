@@ -1,7 +1,8 @@
+import { Platform } from '@ionic/angular';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FileUtilService } from '../file-util.service';
+
+import { ImgControllerService } from './../img-controller.service';
 import { Subscription} from 'rxjs';
-import { stringify } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-img-util',
@@ -10,10 +11,16 @@ import { stringify } from '@angular/compiler/src/util';
 })
 export class ImgUtilComponent implements OnInit, OnDestroy {
 
-  arquivosLocaisEmissor$: Subscription;
+  arquivosLocaisListener: Subscription;
   imagesSrcs: Array<string>;
 
-  constructor(private us: FileUtilService) {}
+  constructor(private controller: ImgControllerService,
+              private platform: Platform) {
+
+                this.platform.ready().then(() => {
+                  console.log('ImgUtilComponent carregado.');
+                });
+              }
 
   ngOnInit() {
 
@@ -21,11 +28,14 @@ export class ImgUtilComponent implements OnInit, OnDestroy {
 
     // this.us.limparDirApp();
 
-    /** Carrega os avatares das imagens locais */
-    this.arquivosLocaisEmissor$ = this.us.listaImagensLocaisAppParaRenderizar()
-    .subscribe(urls => {
-      console.log(urls);
-      this.imagesSrcs = urls;
+    this.platform.ready().then( resp => {
+      console.log('vou chamar o listar...');
+      /** Carrega os avatares das imagens locais */
+      this.arquivosLocaisListener = this.controller.listaImagensLocaisAppParaRenderizar()
+      .subscribe(urls => {
+        // console.log(urls);
+        this.imagesSrcs = urls;
+      });
     });
 
     /** Carrega a imagem principal */ /*
@@ -39,10 +49,10 @@ export class ImgUtilComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.arquivosLocaisEmissor$.unsubscribe();
+    this.arquivosLocaisListener.unsubscribe();
   }
 
   pegaImagem() {
-    this.us.capturaImagem();
+    this.controller.capturaImagem();
   }
 }

@@ -1,120 +1,79 @@
+import { Platform } from '@ionic/angular';
+import { Injectable, OnInit, OnDestroy } from '@angular/core';
+
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File, Entry, RemoveResult } from '@ionic-native/file/ngx';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { Injectable, OnInit, OnDestroy } from '@angular/core';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { ImageResizer, ImageResizerOptions } from '@ionic-native/image-resizer/ngx';
-import { Subject, Observable, Subscription } from 'rxjs';
+import { FileChooser, FileChooserOptions } from '@ionic-native/file-chooser/ngx';
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class FileUtilService implements OnInit, OnDestroy {
+export class FileUtilService {
 
-  private static BASE_FILE_SYSTEM = 'file:///data/user/0/io.ionic.starter';
-  private static APP_ROOT_DIR = 'files';
-
-  private static fileWorkerObserver$: Subscription;
-  private static imgURLsEmissor$ = new Subject<Array<string>>();
-
-  private static urlsParaExibicao = new Array<string>();
+  private APP_ROOT_DIR: string; // 'files';
+  private BASE_FILE_SYSTEM: string; // 'file:///data/user/0/io.ionic.starter';
 
   constructor(
     private file: File,
-    private webview: WebView,
     private fileChooser: FileChooser,
     private filePath: FilePath,
-    private imageResizer: ImageResizer
-  ) {}
+    private platform: Platform) {
 
-  ngOnInit(): void {
+      this.platform.ready().then(() => {
+        console.log('FileUtilService carregado.');
+        this.APP_ROOT_DIR = this.getAppDir();
+        this.BASE_FILE_SYSTEM = this.getAppPath();
+      });
 
-  }
-
-  ngOnDestroy(): void {
-    if (FileUtilService.fileWorkerObserver$ != null
-      && FileUtilService.fileWorkerObserver$ !== undefined) {
-      FileUtilService.fileWorkerObserver$.unsubscribe();
     }
 
+
+  /**
+   * Obtem o diretorio do aplicativo
+   *
+   * @todo poderia usar expressão regular..
+   * @testedOn Android
+   * @returns diretorio local. exemplo: 'files'
+   */
+  public getAppDir(): string {
+
+    let appPath;
+    let ultimaPos = this.file.dataDirectory.lastIndexOf('/');
+    if (this.file.dataDirectory.endsWith('/')) {
+      appPath = this.file.dataDirectory.substr(0, ultimaPos);
+      ultimaPos = appPath.lastIndexOf('/');
+    }
+    const dir = appPath.substr(ultimaPos + 1);
+    // console.log('appDir :: ' + dir);
+    return dir;
   }
 
-  public convertLocalFile2Url(fileName: string): string {
-    return this.webview.convertFileSrc(fileName);
+  /**
+   * @returns path do diretorio local. exemplo: 'file:///data/user/0/io.ionic.starter'
+   */
+  public getAppPath(): string {
+
+    const posicaoDir = this.file.dataDirectory.indexOf(this.APP_ROOT_DIR);
+    const path = this.file.dataDirectory.substr(0, posicaoDir - 1);
+    // console.log('appPath :: ' + path);
+    return path;
   }
 
-  private escolherArquivo(): Promise<string> {
-    console.log('escolherArquivo():');
+  public escolherArquivo(): Promise<string> {
     return this.fileChooser.open();
   }
 
-  private convertURLparaPathNativo(uriEscolhido: string): Promise<string> {
+  public convertURLparaPathNativo(uriEscolhido: string): Promise<string> {
     return this.filePath.resolveNativePath(uriEscolhido);
   }
 
-  public capturaImagem(): Observable<Array<string>> {
-
-    let resp = '';
-    this.escolherArquivo()
-
-      .then( uriImagem => {
-
-        console.log(uriImagem);
-        this.convertURLparaPathNativo(uriImagem)
-
-          .then( (nativePath) => {
-
-            this.resizeFile(nativePath).then(arq => {
-              // console.log(arq);
-              resp = this.convertLocalFile2Url(arq);
-              // console.log('resp' + resp);
-              // FileUtilService.urlEmissor$.next(resp);
-              FileUtilService.urlsParaExibicao.push(resp);
-              // FileUtilService.urlEmissor$.next(resp);
-              FileUtilService.imgURLsEmissor$.next(FileUtilService.urlsParaExibicao);
-            });
-
-            /*
-            this.copiarArquivo('file:///' + result.newPath, result.fileName, this.file.dataDirectory, nomeDoArquivo)
-
-              .then(s => {
-
-                console.log(s);
-                resp = this.convertLocalFile2Url(s.nativeURL);
-                console.log('resp' + resp);
-
-                UtilService.urlEmissor$.next(resp);
-
-              }); */
-          });
-      });
-
-    return FileUtilService.imgURLsEmissor$.asObservable();
-  }
-
-  // essa merda vai dar erro em outros sistemas de arquivos!
-  /*private parsePath(path: string) {
-
-      const array = path.split('/');
-      const charSeparator = '/';
-      let newPath = '';
-      let fileName = '';
-      for (let index = 3; index < array.length - 1; index++) {
-        const element = array[index];
-        newPath = newPath + charSeparator + element;
-      }
-      fileName = array[array.length - 1];
-
-      return { newPath, fileName };
-    }*/
-
-
-  private deletaLocalFile(file: string): Promise<RemoveResult> {
+  public deletaLocalFile(file: string): Promise<RemoveResult> {
     return this.file.removeFile(this.file.dataDirectory, file);
   }
 
-  private getUltimoArquivo(): any {
-    this.file.listDir(FileUtilService.BASE_FILE_SYSTEM, FileUtilService.APP_ROOT_DIR)
+  public getUltimoArquivo(): any {
+    this.file.listDir(this.BASE_FILE_SYSTEM, this.APP_ROOT_DIR)
      .then(arquivos => {
         const resp = arquivos[arquivos.length - 1].name;
         console.log('resp' + resp);
@@ -123,86 +82,24 @@ export class FileUtilService implements OnInit, OnDestroy {
      .catch(e => console.log('erro'));
   }
 
-  logaEspacoLivreHD(): Promise<number> {
+  public logaEspacoLivreHD(): Promise<number> {
     return this.file.getFreeDiskSpace();
   }
 
-  listaArquivosEDiretoriosLocaisApp(): Promise<Entry[]> {
+  public listaArquivosEDiretoriosLocaisApp(): Promise<Entry[]> {
     return this.file.listDir(
-      FileUtilService.BASE_FILE_SYSTEM,
-      FileUtilService.APP_ROOT_DIR
+      this.BASE_FILE_SYSTEM,
+      this.APP_ROOT_DIR
     );
   }
 
-  listaApenasArquivosLocaisApp(): Observable <Array<string>> {
-    const resposta = new Array<string>();
-    this.listaArquivosEDiretoriosLocaisApp()
-      .then( entry => {
-        entry.forEach(element => {
-          // console.log('element::' + element);
-          if (element.isFile) {
-            resposta.push(element.nativeURL);
-          }
-        });
-        FileUtilService.imgURLsEmissor$.next(resposta);
-      });
-
-    return FileUtilService.imgURLsEmissor$.asObservable();
-  }
-
-  listaImagensLocaisAppParaRenderizar(): Observable <Array<string>> {
-    const resposta = new Array<string>();
-    this.listaArquivosEDiretoriosLocaisApp()
-      .then( entry => {
-        entry.forEach( element => {
-        // console.log('element::' + element);
-        let fileName = element.nativeURL;
-        if (element.isFile && fileName.endsWith('.jpg')) {
-          fileName = this.convertLocalFile2Url(fileName);
-          resposta.push(fileName);
-        }
-      });
-        FileUtilService.urlsParaExibicao = resposta;
-        FileUtilService.imgURLsEmissor$.next(resposta);
-    });
-
-    return FileUtilService.imgURLsEmissor$.asObservable();
-  }
-
-  copiarArquivo(
+  public opiarArquivo(
       pathOrigem: string,
       fileOrigem: string,
       pathDestino: string,
       fileDestino: string
     ): Promise<Entry> {
       return this.file.copyFile(pathOrigem, fileOrigem, pathDestino, fileDestino);
-  }
-
-  limparDirApp() {
-
-     FileUtilService.fileWorkerObserver$ = this.listaApenasArquivosLocaisApp().subscribe(resp => {
-
-        resp.forEach(element => {
-          const fileName = element.substr(element.length - 17);
-          // console.log('fileName::' + fileName);
-          this.deletaLocalFile(fileName).then((msg) => console.log('deletado :: ' + msg));
-        });
-
-    });
-
-  }
-
-  private resizeFile(uriEscolhido: string): Promise<any> {
-    const options = {
-      uri: uriEscolhido,
-      folderName: this.file.dataDirectory,
-      quality: 35,
-      width: 1000,
-      height: 1000
-    } as ImageResizerOptions;
-
-    return this.imageResizer.resize(options);
-
   }
 
 }

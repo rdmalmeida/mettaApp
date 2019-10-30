@@ -19,12 +19,6 @@ import { AppRoutingModule } from './app-routing.module';
   providers: [
     StatusBar,
     SplashScreen,
-
-    /*{ provide: File, useClass:    File },
-    { provide: WebView, useClass:    WebView },
-    { provide: FileChooser, useClass:    FileChooser },
-    { provide: FilePath, useClass:    FilePath },*/
-
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

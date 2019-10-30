@@ -1,23 +1,22 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar style="border-bottom-style: solid;">
     <ion-title>
       MettaBavana
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
+<ion-toolbar style="border-bottom-style: solid; border-bottom-color: darkblue; height: 25px;">
+  <ion-buttons slot="start" style="margin-bottom: 30px;"> 
+    <ion-icon name="add-circle-outline" (click)="teste()"></ion-icon> 
+  </ion-buttons>
+</ion-toolbar>
+
 <ion-content>
    <div>
-    <ion-list *ngIf="1==2" >
-      <ion-item>
-
-          <ion-img src="assets/images/img1.jpg" style="width:200px;height:200px;"></ion-img>
-
-      </ion-item>
-    </ion-list>
     
     <app-img-util></app-img-util>
     
-</div>
+  </div>
 
 </ion-content>

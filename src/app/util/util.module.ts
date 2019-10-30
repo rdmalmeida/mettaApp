@@ -1,5 +1,6 @@
+import { ImgControllerService } from './img-controller.service';
+import { ImgUtilService } from './img-util.service';
 import { ImageResizer } from '@ionic-native/image-resizer/ngx';
-import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ImgUtilComponent } from './img-util/img-util.component';
 import { File } from '@ionic-native/file/ngx';
@@ -21,7 +22,9 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
   providers: [
 
     ImgUtilComponent,
+    { provide: ImgControllerService, useClass:    ImgControllerService },
     { provide: FileUtilService, useClass:    FileUtilService },
+    { provide: ImgUtilService, useClass:    ImgUtilService },
     { provide: File, useClass:    File },
     { provide: WebView, useClass:    WebView },
     { provide: FileChooser, useClass:    FileChooser },
