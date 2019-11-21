@@ -21,9 +21,11 @@ export class FileUtilService {
     private platform: Platform) {
 
       this.platform.ready().then(() => {
-        console.log('FileUtilService carregado.');
+        
         this.APP_ROOT_DIR = this.getAppDir();
         this.BASE_FILE_SYSTEM = this.getAppPath();
+
+        console.log('FileUtilService carregado.');
       });
 
     }
@@ -38,15 +40,23 @@ export class FileUtilService {
    */
   public getAppDir(): string {
 
-    let appPath;
-    let ultimaPos = this.file.dataDirectory.lastIndexOf('/');
-    if (this.file.dataDirectory.endsWith('/')) {
-      appPath = this.file.dataDirectory.substr(0, ultimaPos);
-      ultimaPos = appPath.lastIndexOf('/');
+    if(this.APP_ROOT_DIR!=undefined && this.APP_ROOT_DIR!=null ){
+      
+      return this.APP_ROOT_DIR;
+
+    } else {
+
+      let appPath;
+      let ultimaPos = this.file.dataDirectory.lastIndexOf('/');
+      if (this.file.dataDirectory.endsWith('/')) {
+        appPath = this.file.dataDirectory.substr(0, ultimaPos);
+        ultimaPos = appPath.lastIndexOf('/');
+      }
+      const dir = appPath.substr(ultimaPos + 1);
+      // console.log('appDir :: ' + dir);
+      return dir;
     }
-    const dir = appPath.substr(ultimaPos + 1);
-    // console.log('appDir :: ' + dir);
-    return dir;
+    
   }
 
   /**
@@ -54,10 +64,15 @@ export class FileUtilService {
    */
   public getAppPath(): string {
 
-    const posicaoDir = this.file.dataDirectory.indexOf(this.APP_ROOT_DIR);
-    const path = this.file.dataDirectory.substr(0, posicaoDir - 1);
-    // console.log('appPath :: ' + path);
-    return path;
+    if(this.BASE_FILE_SYSTEM != null && this.BASE_FILE_SYSTEM!= undefined){
+      return this.BASE_FILE_SYSTEM;
+    } else {
+      const posicaoDir = this.file.dataDirectory.indexOf(this.APP_ROOT_DIR);
+      const path = this.file.dataDirectory.substr(0, posicaoDir - 1);
+      // console.log('appPath :: ' + path);
+      return path;
+    }
+    
   }
 
   public escolherArquivo(): Promise<string> {
@@ -101,5 +116,6 @@ export class FileUtilService {
     ): Promise<Entry> {
       return this.file.copyFile(pathOrigem, fileOrigem, pathDestino, fileDestino);
   }
+
 
 }

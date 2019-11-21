@@ -1,6 +1,8 @@
 import { ImgControllerService } from './../util/img-controller.service';
 
 import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { StorageUtilService } from '../util/storage-util.service';
 
 @Component({
   selector: 'app-home',
@@ -9,51 +11,24 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  imageSrc: any;
-  anterior = '';
-  anteriorHD = '';
 
-  /*private camera: Camera,
-              private sanitizer: DomSanitizer,*/
-  constructor(
-              private controller: ImgControllerService) {}
+  constructor(private controller: ImgControllerService,
+    private storageService: StorageUtilService ) {}
 
+             
+    private subscription: Subscription;
 
     teste() {
 
-        this.controller.capturaImagem().subscribe((value) => console.log('ok' + value));
+      //this.storageService.clearAll().then( () => console.log('clear') );
+      
+      this.controller.capturaImagem().then(
+          ()=> console.log('next')
+         );
 
-      }
+      //this.subscription.unsubscribe();
+      
+      //this.controller.limparDirApp().subscribe();
     }
 
-
-/*
-  private openGallery() {
-
-    const options: CameraOptions = {
-      quality: 10,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.PNG,
-      mediaType: this.camera.MediaType.PICTURE
-    };
-
-    this.camera.getPicture(options).then(
-      (imageData) => {
-        // imageData is either a base64 encoded string or a file URI
-        // If it's base64 (DATA_URL):
-
-        // console.log('imageData:[' + imageData + ']');
-
-        // funciona
-        const base64Image = 'data:image/jpeg;base64,' + imageData;
-        this.imageSrc = this.sanitizer.bypassSecurityTrustUrl(base64Image);
-
-
-        // console.log('this.imageSrc:[' + this.imageSrc + ']');
-
-      }, (err) => {
-        // Handle error
-        console.log(err);
-    });
-  }
-*/
+}

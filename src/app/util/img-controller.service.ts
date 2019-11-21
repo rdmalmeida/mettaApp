@@ -3,29 +3,35 @@ import { ImgUtilService } from './img-util.service';
 import { FileUtilService } from './file-util.service';
 import { Observable, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
+import { StorageUtilService } from './storage-util.service';
+import { Relacao } from '../vos/Relacao';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImgControllerService {
 
+  private static imgURLsEmissor$ = new Subject<Array<any>>();
+  private static relacoesListMemoria = new Array<Relacao>();
+
+  private static appPath = '';
+  private static appDir = '';
+  
+
   constructor(private fuService: FileUtilService,
               private iuService: ImgUtilService,
-              private platform: Platform) {
+              private platform: Platform,
+              private storageService: StorageUtilService) {
 
-                this.platform.ready().then(() => {
-                  console.log('ImgControllerService carregado.');
-                });
+                this.platform.ready().then( () => {                  
+                  console.debug('ImgControllerService plataforma carregada.');
+                });                
+
   }
 
+  public async capturaImagem(): Promise<boolean> {
 
-  private static imgURLsEmissor$ = new Subject<Array<string>>();
-  private static urlsParaExibicao = new Array<string>();
-
-
-  public capturaImagem(): Observable<Array<string>> {
-
-    let resp = '';
     this.fuService.escolherArquivo()
 
       .then( uriImagem => {
@@ -35,36 +41,52 @@ export class ImgControllerService {
 
           .then( (nativePath) => {
 
+            if(ImgControllerService.appDir===''){
+              ImgControllerService.appPath = this.fuService.getAppPath();
+              ImgControllerService.appDir = this.fuService.getAppDir();
+            }//avaliar melhorar
+            
             console.log('nativePath::' + nativePath + '\nthis.fuService.getAppDir()::' + this.fuService.getAppDir());
-            this.iuService.resizeFile(nativePath, this.fuService.getAppPath() + '/' + this.fuService.getAppDir())
+            this.iuService.resizeFile(nativePath, ImgControllerService.appPath + '/' + ImgControllerService.appDir)
             .then(arq => {
               console.log(arq);
-              resp = this.iuService.convertLocalFile2Url(arq);
-              console.log('resp' + resp);
-              // this.urlEmissor$.next(resp);
-              ImgControllerService.urlsParaExibicao.push(resp);
-              // this.urlEmissor$.next(resp);
-              ImgControllerService.imgURLsEmissor$.next(ImgControllerService.urlsParaExibicao);
+              let localUrl2Show = this.iuService.convertLocalFile2Url(arq);
+              console.log('localUrl2Show' + localUrl2Show);
+
+              //monta json com os dados
+              //const jsonStr = {"uriImagem":uriImagem, "nativePath":nativePath, "localFile":arq, "localUrl2Show":localUrl2Show, "counter":0};
+
+              //persiste dados localmente e notifica observador
+              let relacao: Relacao = new Relacao(uriImagem, nativePath, arq, localUrl2Show, 0);
+              this.storageService.addRelacao(relacao).then(() => {
+
+                ImgControllerService.relacoesListMemoria.push(relacao);
+                ImgControllerService.imgURLsEmissor$.next(ImgControllerService.relacoesListMemoria);
+                return true;
+              })
+             
             });
-
-            /*
-            this.copiarArquivo('file:///' + result.newPath, result.fileName, this.file.dataDirectory, nomeDoArquivo)
-
-              .then(s => {
-
-                console.log(s);
-                resp = this.convertLocalFile2Url(s.nativeURL);
-                console.log('resp' + resp);
-
-                UtilService.urlEmissor$.next(resp);
-
-              }); */
+        
           });
       });
 
-    return ImgControllerService.imgURLsEmissor$.asObservable();
+    return false;
   }
 
+  //so deve ser chamado ao abrir o app para carregar em memoria  
+  public getRelacoes(): Observable <Array<Relacao>> {
+    
+        //carrega lista do storage
+        this.storageService.readRelacoes().then(
+          
+        (relacoes) => { 
+          (ImgControllerService.relacoesListMemoria = relacoes);            
+            ImgControllerService.imgURLsEmissor$.next(ImgControllerService.relacoesListMemoria);            
+        });
+
+        return ImgControllerService.imgURLsEmissor$.asObservable();
+
+  }
 
   public listaApenasArquivosLocaisApp(): Observable <Array<string>> {
     const resposta = new Array<string>();
@@ -82,7 +104,7 @@ export class ImgControllerService {
     return ImgControllerService.imgURLsEmissor$.asObservable();
   }
 
-  public listaImagensLocaisAppParaRenderizar(): Observable <Array<string>> {
+  /*public listaImagensLocaisAppParaRenderizar(): Observable <Array<string>> {
 
      const resposta = new Array<string>();
      this.fuService.listaArquivosEDiretoriosLocaisApp()
@@ -96,12 +118,12 @@ export class ImgControllerService {
           }
        });
 
-          ImgControllerService.urlsParaExibicao = resposta;
-          ImgControllerService.imgURLsEmissor$.next(ImgControllerService.urlsParaExibicao);
+          ImgControllerService.relacoesListMemoria = resposta;
+          ImgControllerService.imgURLsEmissor$.next(ImgControllerService.relacoesListMemoria);
       });
 
      return ImgControllerService.imgURLsEmissor$.asObservable();
-  }
+  }*/
 
 
   public limparDirApp(): Observable<Array<string>> {
@@ -114,8 +136,8 @@ export class ImgControllerService {
          this.fuService.deletaLocalFile(fileName)
          .then((msg) => {
            console.log('deletado :: ' + msg);
-           ImgControllerService.urlsParaExibicao = new Array<string>();
-           ImgControllerService.imgURLsEmissor$.next(ImgControllerService.urlsParaExibicao);
+           ImgControllerService.relacoesListMemoria = new Array<Relacao>();
+           ImgControllerService.imgURLsEmissor$.next(ImgControllerService.relacoesListMemoria);
          });
        });
    });

@@ -8,12 +8,15 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
+import { ModalPageModule } from '../util/modal/modal.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule, UtilModule,
+    IonicModule, 
+    UtilModule,
+    ModalPageModule,
 
     RouterModule.forChild([
       {

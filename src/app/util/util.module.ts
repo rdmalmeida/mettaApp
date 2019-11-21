@@ -11,6 +11,10 @@ import { CommonModule } from '@angular/common';
 
 import { FileUtilService } from './file-util.service';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { IonicStorageModule, Storage } from '@ionic/storage';
+import { NativeAudio } from '@ionic-native/native-audio/ngx';
+import { AudioUtilService } from './audio-util.service';
+
 
 
 @NgModule({
@@ -24,12 +28,13 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
     ImgUtilComponent,
     { provide: ImgControllerService, useClass:    ImgControllerService },
     { provide: FileUtilService, useClass:    FileUtilService },
-    { provide: ImgUtilService, useClass:    ImgUtilService },
+    { provide: ImgUtilService, useClass:    ImgUtilService },        
     { provide: File, useClass:    File },
     { provide: WebView, useClass:    WebView },
     { provide: FileChooser, useClass:    FileChooser },
     { provide: FilePath, useClass:    FilePath },
     { provide: ImageResizer, useClass:    ImageResizer }
+    
 
 ],
   exports: [ImgUtilComponent],

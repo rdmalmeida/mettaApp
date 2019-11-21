@@ -3,19 +3,19 @@
 <!--
 
   <ion-item>
-    <input type="button" (click)="pegaImagem()" value="imagem" />
+    <input type="button" (click)="showStorage()" value="showStorage" />
   </ion-item>
-
 -->
 
-  <div *ngIf="imagesSrcs.length>0"> <!--style="width: 38%"-->
-    <ion-item *ngFor="let item of imagesSrcs">
+
+  <div *ngIf="imagesVOs.length>0"> <!--style="width: 38%"-->
+    <ion-item *ngFor="let item of imagesVOs" (click)="play(item)">
         
         <ion-avatar style="height: 100px;width: 100px;">
-            <img [src]='item'>  
+            <img [src]='item.localUrl2Show'>  
         </ion-avatar>
 
-        <ion-label style="margin-left: 10px;">03 / 10 Praticas realizadas</ion-label>
+        <ion-label style="margin-left: 10px;">{{item.counter}} / 10 Pratica(s) realizada(s)</ion-label>
 
     </ion-item>
   </div>

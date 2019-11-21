@@ -3,6 +3,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { ImgControllerService } from './../img-controller.service';
 import { Subscription} from 'rxjs';
+import { ModalService } from '../modal/modal.service';
+import { Relacao } from 'src/app/vos/Relacao';
+
 
 @Component({
   selector: 'app-img-util',
@@ -12,47 +15,38 @@ import { Subscription} from 'rxjs';
 export class ImgUtilComponent implements OnInit, OnDestroy {
 
   arquivosLocaisListener: Subscription;
-  imagesSrcs: Array<string>;
+  imagesVOs: Array<Relacao> = new Array<Relacao>();
 
   constructor(private controller: ImgControllerService,
-              private platform: Platform) {
+              private platform: Platform,
+              private modalService: ModalService) {
 
                 this.platform.ready().then(() => {
-                  console.log('ImgUtilComponent carregado.');
+                  console.debug('ImgUtilComponent carregado.');
                 });
               }
 
   ngOnInit() {
 
-    this.imagesSrcs = new Array<string>();
-
-    // this.us.limparDirApp();
-
     this.platform.ready().then( resp => {
-      console.log('vou chamar o listar...');
-      /** Carrega os avatares das imagens locais */
-      this.arquivosLocaisListener = this.controller.listaImagensLocaisAppParaRenderizar()
-      .subscribe(urls => {
-        // console.log(urls);
-        this.imagesSrcs = urls;
-      });
+      console.debug('vou chamar o listar...');
+      // Carrega os avatares das imagens locais 
+      this.arquivosLocaisListener = this.controller.getRelacoes()
+        .subscribe(itensRelacoes => {
+          console.log('itensRelacoes::' + itensRelacoes);
+          this.imagesVOs = itensRelacoes;
+        });
     });
-
-    /** Carrega a imagem principal */ /*
-    this.sub = this.us.getUrl().subscribe(novaUrl => {
-      this.imageSrc = novaUrl;
-      console.log(this.imageSrc);
-    });
-
-     */
-
   }
 
+ 
   ngOnDestroy(): void {
     this.arquivosLocaisListener.unsubscribe();
   }
 
-  pegaImagem() {
-    this.controller.capturaImagem();
+  play(item){
+    console.log('vou abrir modal...');
+    this.modalService.presentModal(item.localUrl2Show);   
   }
+
 }
