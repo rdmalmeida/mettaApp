@@ -25,6 +25,7 @@ export class FileUtilService {
         this.APP_ROOT_DIR = this.getAppDir();
         this.BASE_FILE_SYSTEM = this.getAppPath();
 
+        this.limparDirApp();
         console.log('FileUtilService carregado.');
       });
 
@@ -108,7 +109,7 @@ export class FileUtilService {
     );
   }
 
-  public opiarArquivo(
+  public copiarArquivo(
       pathOrigem: string,
       fileOrigem: string,
       pathDestino: string,
@@ -117,5 +118,38 @@ export class FileUtilService {
       return this.file.copyFile(pathOrigem, fileOrigem, pathDestino, fileDestino);
   }
 
+  limparDirApp() {
 
+    this.listaApenasArquivosLocaisApp().then(resp => {
+
+       resp.forEach(element => {
+         const fileName = element.substr(element.length - 17);
+         // console.log('fileName::' + fileName);
+         this.deletaLocalFile(fileName).then((msg) => console.log('deletado :: ' + msg));
+       });
+
+   });
+
+   
+
+ }
+
+
+
+ async listaApenasArquivosLocaisApp(): Promise <Array<string>> {
+  const resposta = new Array<string>();
+  this.listaArquivosEDiretoriosLocaisApp()
+    .then( entry => {
+      entry.forEach(element => {
+        // console.log('element::' + element);
+        if (element.isFile) {
+          resposta.push(element.nativeURL);
+        }
+      });      
+    });
+
+  return resposta;
 }
+
+ }
+

@@ -77,7 +77,7 @@ export class ImgControllerService {
   public getRelacoes(): Observable <Array<Relacao>> {
     
         //carrega lista do storage
-        this.storageService.readRelacoes().then(
+        this.storageService.readRelacoesAsArray().then(
           
         (relacoes) => { 
           (ImgControllerService.relacoesListMemoria = relacoes);            

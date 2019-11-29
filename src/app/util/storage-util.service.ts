@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import { Storage } from '@ionic/storage';
 import { Relacao } from '../vos/Relacao';
 
@@ -12,34 +11,56 @@ export class StorageUtilService {
 
     if(storage.ready){
       console.log('storage ready');
+      //this.updateRelacao(new Relacao('a', 'b', '', '', ''));
+      //this.clearAll();
+      
     }
   }
 
   private ST_ID_RELACOES = 'relacoes';  
 
 
-  async readRelacoes(): Promise<Array<Relacao>> {
+  async readRelacoes(): Promise<Map<String, Relacao>> {
     
     let result = await this.storage.get(this.ST_ID_RELACOES);
     if(result ==null){
-      result = new Array<Relacao>();
+      result = new Map<String, Relacao>();
     }
     return result;
   } 
 
+  async readRelacoesAsArray(): Promise<Array<Relacao>> {
+    let retorno = new Array();
+    await this.readRelacoes().then(map => { retorno = Array.from(map.values) } );
+    return retorno;
+  } 
 
-  async addRelacao(jsonStr): Promise<boolean> {
-    
-    
-    this.readRelacoes().then( (relacoes) => {      
-      let result = relacoes;      
-      result.push(jsonStr);
-      this.storage.set(this.ST_ID_RELACOES, result);      
+  async addRelacao(relacao: Relacao): Promise<boolean> {
+
+    this.readRelacoes().then( (myMap) => {      
+      myMap.set(relacao.uriImagem, relacao);
+      this.storage.set(this.ST_ID_RELACOES, myMap);      
       return true;
     });
 
     return false;
      
+  }
+
+  async updateRelacao(novaRelacao: Relacao): Promise<boolean> {
+
+    this.readRelacoes().then( (relacoes) => {      
+      relacoes.forEach(this.logArrayElements);            
+      return true;
+    });
+
+    return false;
+  }
+
+  logArrayElements(element:Relacao, index, array) {
+    console.log("a[" + index + "] = " + element.uriImagem);
+    //result.push(jsonStr);
+    //  this.storage.set(this.ST_ID_RELACOES, result);      
   }
 
   clearAll(): Promise<void> {

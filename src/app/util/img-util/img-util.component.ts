@@ -46,7 +46,7 @@ export class ImgUtilComponent implements OnInit, OnDestroy {
 
   play(item){
     console.log('vou abrir modal...');
-    this.modalService.presentModal(item.localUrl2Show);   
+    this.modalService.presentModal(item);
   }
 
 }
