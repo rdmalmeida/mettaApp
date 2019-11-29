@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { AudioUtilService } from '../audio-util.service';
-import { NavParams, ModalController } from '@ionic/angular';
+import { NavParams } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
 import { Relacao } from 'src/app/vos/Relacao';
+import { ImgControllerService } from '../img-controller.service';
 
 @Component({
   selector: 'app-modal',
@@ -16,7 +17,7 @@ export class ModalPage implements OnInit, OnDestroy {
   constructor(private audioService: AudioUtilService,
     private navParams: NavParams,
     private platform: Platform,
-    private modalController: ModalController) { 
+    private imgController: ImgControllerService) { 
 
     console.log('modalpage constructor');
     
@@ -30,8 +31,7 @@ export class ModalPage implements OnInit, OnDestroy {
       console.log('devia iniciar audio...');
       this.audioService.play( ()=> { 
         
-        this.modalController.dismiss();
-        this.item.counter++;
+        this.imgController.updateRelacao(this.item);
 
       });
     });
@@ -40,11 +40,6 @@ export class ModalPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     console.log('devia parar audio...');
     this.audioService.stop();
-  }
-
-  
-  close(){
-    this.modalController.dismiss();
   }
 
 }

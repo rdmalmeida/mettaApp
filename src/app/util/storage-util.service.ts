@@ -11,9 +11,7 @@ export class StorageUtilService {
 
     if(storage.ready){
       console.log('storage ready');
-      //this.updateRelacao(new Relacao('a', 'b', '', '', ''));
       //this.clearAll();
-      
     }
   }
 
@@ -23,23 +21,35 @@ export class StorageUtilService {
   async readRelacoes(): Promise<Map<String, Relacao>> {
     
     let result = await this.storage.get(this.ST_ID_RELACOES);
+    console.log('result::'+result);
+
     if(result ==null){
       result = new Map<String, Relacao>();
+    } else {
+      result = new Map(JSON.parse(result));
+      
     }
+    
     return result;
   } 
 
   async readRelacoesAsArray(): Promise<Array<Relacao>> {
     let retorno = new Array();
-    await this.readRelacoes().then(map => { retorno = Array.from(map.values) } );
+    await this.readRelacoes().then(map => { 
+      if(map.size>0)
+        retorno = Array.from(map.values());
+    });
     return retorno;
   } 
 
   async addRelacao(relacao: Relacao): Promise<boolean> {
 
-    this.readRelacoes().then( (myMap) => {      
+    this.readRelacoes().then( (myMap) => {   
+      //console.log('addRelacao::myMap::'+ myMap);   
       myMap.set(relacao.uriImagem, relacao);
-      this.storage.set(this.ST_ID_RELACOES, myMap);      
+      const convertido = JSON.stringify(Array.from(myMap));
+      //console.log('addRelacao::convertido::'+convertido);
+      this.storage.set(this.ST_ID_RELACOES, convertido);      
       return true;
     });
 
@@ -49,18 +59,15 @@ export class StorageUtilService {
 
   async updateRelacao(novaRelacao: Relacao): Promise<boolean> {
 
-    this.readRelacoes().then( (relacoes) => {      
-      relacoes.forEach(this.logArrayElements);            
+    this.readRelacoes().then( (mapaRelacoes) => {
+      //console.log('updateRelacao::mapaRelacoes::'+ mapaRelacoes);
+      mapaRelacoes.set(novaRelacao.uriImagem, novaRelacao);
+      const convertido = JSON.stringify(Array.from(mapaRelacoes));
+      this.storage.set(this.ST_ID_RELACOES, convertido);      
       return true;
     });
 
     return false;
-  }
-
-  logArrayElements(element:Relacao, index, array) {
-    console.log("a[" + index + "] = " + element.uriImagem);
-    //result.push(jsonStr);
-    //  this.storage.set(this.ST_ID_RELACOES, result);      
   }
 
   clearAll(): Promise<void> {

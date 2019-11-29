@@ -3,7 +3,7 @@ import { Injectable, OnInit, OnDestroy } from '@angular/core';
 
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File, Entry, RemoveResult } from '@ionic-native/file/ngx';
-import { FileChooser, FileChooserOptions } from '@ionic-native/file-chooser/ngx';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
 
 
 @Injectable({
@@ -25,7 +25,7 @@ export class FileUtilService {
         this.APP_ROOT_DIR = this.getAppDir();
         this.BASE_FILE_SYSTEM = this.getAppPath();
 
-        this.limparDirApp();
+        //this.limparDirApp();
         console.log('FileUtilService carregado.');
       });
 
@@ -118,7 +118,8 @@ export class FileUtilService {
       return this.file.copyFile(pathOrigem, fileOrigem, pathDestino, fileDestino);
   }
 
-  limparDirApp() {
+  //refatorar prar o controller chamar este metodo
+  /*limparDirApp() {
 
     this.listaApenasArquivosLocaisApp().then(resp => {
 
@@ -130,11 +131,7 @@ export class FileUtilService {
 
    });
 
-   
-
  }
-
-
 
  async listaApenasArquivosLocaisApp(): Promise <Array<string>> {
   const resposta = new Array<string>();
@@ -149,7 +146,7 @@ export class FileUtilService {
     });
 
   return resposta;
-}
+}*/
 
  }
 

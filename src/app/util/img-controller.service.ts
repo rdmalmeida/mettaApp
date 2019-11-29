@@ -1,9 +1,8 @@
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { ImgUtilService } from './img-util.service';
 import { FileUtilService } from './file-util.service';
 import { Observable, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage';
 import { StorageUtilService } from './storage-util.service';
 import { Relacao } from '../vos/Relacao';
 
@@ -22,10 +21,12 @@ export class ImgControllerService {
   constructor(private fuService: FileUtilService,
               private iuService: ImgUtilService,
               private platform: Platform,
-              private storageService: StorageUtilService) {
+              private storageService: StorageUtilService,
+              private modalController: ModalController) {
 
                 this.platform.ready().then( () => {                  
                   console.debug('ImgControllerService plataforma carregada.');
+                 //this.limparDirApp();
                 });                
 
   }
@@ -88,6 +89,12 @@ export class ImgControllerService {
 
   }
 
+  updateRelacao(novaRelacao: Relacao) {
+    novaRelacao.counter++;
+    this.storageService.updateRelacao(novaRelacao);    
+    this.modalController.dismiss();
+  }
+
   public listaApenasArquivosLocaisApp(): Observable <Array<string>> {
     const resposta = new Array<string>();
     this.fuService.listaArquivosEDiretoriosLocaisApp()
@@ -103,28 +110,6 @@ export class ImgControllerService {
 
     return ImgControllerService.imgURLsEmissor$.asObservable();
   }
-
-  /*public listaImagensLocaisAppParaRenderizar(): Observable <Array<string>> {
-
-     const resposta = new Array<string>();
-     this.fuService.listaArquivosEDiretoriosLocaisApp()
-       .then( entry => {
-          entry.forEach( element => {
-          // console.log('element::' + element);
-          let fileName = element.nativeURL;
-          if (element.isFile && fileName.endsWith('.jpg')) {
-            fileName = this.iuService.convertLocalFile2Url(fileName);
-            resposta.push(fileName);
-          }
-       });
-
-          ImgControllerService.relacoesListMemoria = resposta;
-          ImgControllerService.imgURLsEmissor$.next(ImgControllerService.relacoesListMemoria);
-      });
-
-     return ImgControllerService.imgURLsEmissor$.asObservable();
-  }*/
-
 
   public limparDirApp(): Observable<Array<string>> {
 
