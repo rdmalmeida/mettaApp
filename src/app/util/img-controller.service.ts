@@ -26,7 +26,6 @@ export class ImgControllerService {
 
                 this.platform.ready().then( () => {                  
                   console.debug('ImgControllerService plataforma carregada.');
-                 //this.limparDirApp();
                 });                
 
   }

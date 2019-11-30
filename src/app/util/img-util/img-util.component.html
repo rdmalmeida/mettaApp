@@ -1,52 +1,25 @@
 <ion-list>
-  
-<!--
 
-  <ion-item>
-    <input type="button" (click)="showStorage()" value="showStorage" />
-  </ion-item>
--->
-
-
-  <div *ngIf="imagesVOs.length>0"> <!--style="width: 38%"-->
+  <div *ngIf="imagesVOs.length>0">
     <ion-item *ngFor="let item of imagesVOs" (click)="play(item)">
         
-        <ion-avatar style="height: 100px;width: 100px;">
-            <img [src]='item.localUrl2Show'>  
-        </ion-avatar>
-
-        <ion-label style="margin-left: 10px;">{{item.counter}} / 10 Pratica(s) realizada(s)</ion-label>
+        <ion-grid>
+            <ion-row>
+                <ion-col size="4">
+                <div>
+                    <ion-avatar>
+                        <img [src]='item.localUrl2Show'>  
+                    </ion-avatar>
+                </div>
+              </ion-col>
+              <ion-col>
+                    <app-score-counter [itemScore]="item.counter"></app-score-counter>      
+              </ion-col>              
+              
+            </ion-row>
+          </ion-grid>
 
     </ion-item>
   </div>
 
-  
-
 </ion-list>
-
-<!--
-
-html com tres fotos centralizadas
-
-
-
-
-
-<ion-list>
-  
-
-
-  <ion-item *ngFor="let item of imagesSrcs" class="item-avatar-right">
-
-      <img src="https://placekitten.com/g/50/50" alt="" />
-      <img src="https://placekitten.com/g/50/50" alt="" />
-      <img src="https://placekitten.com/g/50/50" alt="" />
-      
-  </ion-item>
-</div>
-
-
-
-</ion-list>
-
--->

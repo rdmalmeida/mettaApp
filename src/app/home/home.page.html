@@ -1,16 +1,22 @@
 <ion-header>
-  <ion-toolbar style="border-bottom-style: solid;">
-    <ion-title>
+  <ion-toolbar color="primary">
+    <ion-title >
       MettaBavana
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-toolbar style="border-bottom-style: solid; border-bottom-color: darkblue; height: 25px;">
-  <ion-buttons slot="start" style="margin-bottom: 30px;"> 
-    <ion-icon name="add-circle-outline" (click)="teste()"></ion-icon> 
+<ion-toolbar class="menu">
+  <ion-buttons slot="start"> 
+    <ion-icon name="add-circle-outline" (click)="addPhoto()"></ion-icon>
+  </ion-buttons>
+
+  <ion-buttons slot="end"> 
+    <ion-icon name="help" (click)="showAbout()"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
+
+
 
 <ion-content>
    <div>

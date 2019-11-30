@@ -11,7 +11,6 @@ export class StorageUtilService {
 
     if(storage.ready){
       console.log('storage ready');
-      //this.clearAll();
     }
   }
 
@@ -21,7 +20,7 @@ export class StorageUtilService {
   async readRelacoes(): Promise<Map<String, Relacao>> {
     
     let result = await this.storage.get(this.ST_ID_RELACOES);
-    console.log('result::'+result);
+    //console.log('result::'+result);
 
     if(result ==null){
       result = new Map<String, Relacao>();

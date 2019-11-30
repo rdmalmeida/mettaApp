@@ -14,14 +14,14 @@ import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { ImgControllerService } from './img-controller.service';
 import { ImgUtilService } from './img-util.service';
 import { FileUtilService } from './file-util.service';
-import { AudioUtilService } from './audio-util.service';
 import { StorageUtilService } from './storage-util.service';
 
 import { ImgUtilComponent } from './img-util/img-util.component';
+import { ScoreCounterComponent } from './img-util/score-counter/score-counter.component';
 
 
 @NgModule({
-  declarations: [ImgUtilComponent],
+  declarations: [ImgUtilComponent, ScoreCounterComponent],
   imports: [
     CommonModule,
     IonicModule,
