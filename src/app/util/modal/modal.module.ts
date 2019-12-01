@@ -27,6 +27,6 @@ const routes: Routes = [
     { provide: ModalService, useClass:    ModalService }
   ],
   exports: [SimpleTextModalComponent],
-  entryComponents: [SimpleTextModalComponent]
+  entryComponents: [ImgModalComponent, SimpleTextModalComponent]
 })
 export class ModalPageModule {}
