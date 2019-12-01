@@ -11,9 +11,9 @@ export class AudioUtilService {
 
   private readonly idAudioMetta = 'metta';
 
-  //private readonly mettaAudioUri = 'assets/audio/meta_.mp3';
+  private readonly mettaAudioUri = 'assets/audio/meta_.mp3';
   //private readonly mettaAudioUri = 'assets/audio/bass.mp3';
-  private readonly mettaAudioUri = 'assets/audio/baruio.mp3';
+  //private readonly mettaAudioUri = 'assets/audio/baruio.mp3';
   
   constructor(private nativeAudio: NativeAudio,
     private modalController: ModalController) {

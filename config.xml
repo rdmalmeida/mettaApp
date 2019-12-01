@@ -3,7 +3,7 @@
     <name>MettaApp</name>
     <description>Um aplicativo muito foda!</description>
     <author email="raphael.dias@gmail.com">MettaApp time de desenvolvimento</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

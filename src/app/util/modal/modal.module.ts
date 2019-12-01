@@ -5,14 +5,14 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ModalPage } from './modal.page';
+
 import { ModalService } from './modal.service';
 
+import { SimpleTextModalComponent } from './simple-text-modal/simple-text-modal.component';
+import { ImgModalComponent } from './modal-Img/img-modal.component';
+
 const routes: Routes = [
-  {
-    path: 'modal',
-    component: ModalPage
-  }
+
 ];
 
 @NgModule({
@@ -22,10 +22,11 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ModalPage],
+  declarations: [ImgModalComponent, SimpleTextModalComponent],
   providers: [
     { provide: ModalService, useClass:    ModalService }
-  ]
-  //entryComponents: [ModalPage]
+  ],
+  exports: [SimpleTextModalComponent],
+  entryComponents: [SimpleTextModalComponent]
 })
 export class ModalPageModule {}
